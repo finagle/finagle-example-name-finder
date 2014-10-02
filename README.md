@@ -1,4 +1,4 @@
-Named-entity recognition with Finagle
+Example: Named-entity recognition with Finagle [![Build Status](https://secure.travis-ci.org/twitter/finagle-name-finder.png)](http://travis-ci.org/twitter/finagle-name-finder)
 =====================================
 
 This project is a demonstration of how you can use Finagle to build a service
