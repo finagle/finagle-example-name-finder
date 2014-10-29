@@ -12,7 +12,7 @@ object NamesServer extends TwitterServer {
     onExit {
       server.close()
     }
-    
+
     Await.ready(server)
   }
 }

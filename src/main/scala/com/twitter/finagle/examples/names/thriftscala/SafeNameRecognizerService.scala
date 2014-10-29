@@ -18,7 +18,7 @@ class SafeNameRecognizerService(
   recognizers: Map[String, AsyncQueue[NameRecognizer]],
   futurePool: FuturePool)
   extends NameRecognizerService[Future] {
-  
+
   def loadRecognizer(lang: String): Future[NameRecognizer] =
     futurePool {
       Future.const(NameRecognizer.create(lang))
