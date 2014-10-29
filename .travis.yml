@@ -3,4 +3,8 @@ language: scala
 scala:
   - 2.10.4
 
+before_script:
+  # default $SBT_OPTS is irrelevant to sbt lancher
+  - unset SBT_OPTS
+
 script: ./download-models.sh && ./sbt test
