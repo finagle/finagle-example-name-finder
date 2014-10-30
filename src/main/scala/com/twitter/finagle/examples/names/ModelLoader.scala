@@ -34,13 +34,13 @@ class ModelLoader(baseDir: File) {
       }
     }
 
-  protected def loadSentenceDetectorModel(file: File): Try[SentenceModel] = 
+  protected def loadSentenceDetectorModel(file: File): Try[SentenceModel] =
     loadModel[SentenceModel](file) { stream => new SentenceModel(stream) }
 
-  protected def loadTokenizerModel(file: File): Try[TokenizerModel] = 
+  protected def loadTokenizerModel(file: File): Try[TokenizerModel] =
     loadModel[TokenizerModel](file) { stream => new TokenizerModel(stream) }
 
-  protected def loadNameFinderModel(file: File): Try[TokenNameFinderModel] = 
+  protected def loadNameFinderModel(file: File): Try[TokenNameFinderModel] =
     loadModel[TokenNameFinderModel](file) { stream => new TokenNameFinderModel(stream) }
 
   protected def createSentenceDetector(model: SentenceModel): SentenceDetector =

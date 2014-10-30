@@ -1,3 +1,5 @@
+package com.twitter.finagle.examples.names
+
 import com.twitter.finagle.Thrift
 import com.twitter.finagle.examples.names.thriftscala._
 import com.twitter.server.TwitterServer
@@ -12,7 +14,7 @@ object NamesServer extends TwitterServer {
     onExit {
       server.close()
     }
-    
+
     Await.ready(server)
   }
 }

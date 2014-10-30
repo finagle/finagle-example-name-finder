@@ -2,7 +2,27 @@
 
 This project is a demonstration of how you can use Finagle to build a service
 that will identify names of people, places, and organizations in any text you
-throw at it. It's currently a work in progress.
+throw at it. It's primarily intended as a pedagogical example, and it's used in
+a "Finagle Essentials" course taught by
+[Twitter University](https://twitter.com/university)
+(you can view the slides for the course
+[here](https://finagle.github.io/finagle-example-name-finder), and the source
+for the slides is included
+[in this repository](https://github.com/finagle/finagle-example-name-finder/tree/master/slides)).
+
+The project includes a small Scala wrapper for the named entity recognition API
+provided by [OpenNLP](https://opennlp.apache.org/) (a Java library for natural
+language processing), together with a couple of implementations (one good and
+one bad) of Finagle [Thrift](https://thrift.apache.org/) services that expose
+the functionality provided by the wrapper.
+
+The following quick start guide describes how to get started with the project in
+an SBT console, and the API documentation is available on
+[this repository's GitHub Pages site](https://finagle.github.io/finagle-example-name-finder/docs).
+Please get in touch via [@finagle](https://twitter.com/finagle)
+or the [Finaglers mailing list](https://groups.google.com/d/forum/finaglers)
+if you have any questions about the code here, and we're always happy to see
+pull requests with additional examples or other improvements!
 
 Quick start
 -----------

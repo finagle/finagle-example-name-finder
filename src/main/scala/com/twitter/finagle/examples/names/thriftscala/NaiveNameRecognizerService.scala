@@ -42,7 +42,7 @@ object NaiveNameRecognizerService {
    * set of language models, encapsulating errors in a Try.
    */
   def create(langs: Seq[String]): Try[NameRecognizerService[Future]] = {
-    val recognizersByName: Seq[Try[(String, NameRecognizer)]] = langs map { lang => 
+    val recognizersByName: Seq[Try[(String, NameRecognizer)]] = langs map { lang =>
       NameRecognizer.create(lang) map { recognizer =>
         lang -> recognizer
       }
