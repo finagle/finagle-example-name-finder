@@ -1,4 +1,6 @@
-# Finagle name finder [![Build Status](https://secure.travis-ci.org/finagle/finagle-example-name-finder.png?branch=master)](http://travis-ci.org/finagle/finagle-example-name-finder)
+# Finagle name finder
+
+[![Build status](https://img.shields.io/travis/finagle/finagle-example-name-finder/master.svg)](http://travis-ci.org/finagle/finagle-example-name-finder)
 
 This project is a demonstration of how you can use Finagle to build a service
 that will identify names of people, places, and organizations in any text you

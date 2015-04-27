@@ -1,11 +1,8 @@
 package com.twitter.finagle.examples.names
 
 import com.twitter.util.{Return, Try}
-import org.junit.runner.RunWith
 import org.scalatest.{BeforeAndAfter, FunSuite}
-import org.scalatest.junit.JUnitRunner
 
-@RunWith(classOf[JUnitRunner])
 class NameRecognizerTest extends FunSuite {
   val recognizer: Try[NameRecognizer] = NameRecognizer.create("en")
 

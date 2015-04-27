@@ -1,10 +1,8 @@
+sudo: false
 language: scala
 
-scala:
-  - 2.10.4
-
 before_script:
-  # default $SBT_OPTS is irrelevant to sbt lancher
-  - unset SBT_OPTS
+  - ./download-models.sh
+  - travis_retry sbt update
 
-script: ./download-models.sh && ./sbt test
+script: sbt test
