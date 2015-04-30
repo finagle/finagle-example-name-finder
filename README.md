@@ -110,33 +110,4 @@ client.findNames("es", esDoc) onSuccess { response =>
 }
 ```
 
-If you need more control over the configuration of the client, you can use the
-more explicit `ClientBuilder` approach:
-
-``` scala
-import com.twitter.conversions.time._
-import com.twitter.finagle.builder.ClientBuilder
-import com.twitter.finagle.thrift.ThriftClientFramedCodec
-
-val transport = ClientBuilder()
-  .name("nerServer")
-  .hosts("localhost:9090")
-  .codec(ThriftClientFramedCodec())
-  .hostConnectionLimit(1)
-  .timeout(1.second)
-  .build()
-
-val client = new NameRecognizerService.FinagledClient(transport)
-
-client.findNames("en", doc) onSuccess { response =>
-  println("People: " + response.persons.mkString(", "))
-  println("Places: " + response.locations.mkString(", "))
-} onFailure { ex =>
-  println("Something bad happened: " + ex.getMessage)
-}
-```
-
-This should produce the same result, but will fail if the server doesn't respond
-within a second.
-
-[1]: http://twitter.github.io/scrooge/
+[1]: https://twitter.github.io/scrooge/
