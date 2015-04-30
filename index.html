@@ -5323,7 +5323,7 @@ The service API doesn&#8217;t know anything about the network
 <h2>Servers</h2>
 <p>Servers make services available on the network over a protocol</p>
 <div class="listingblock">
-<div class="content"><div class="highlight"><pre><span class="k">import</span> <span class="nn">com.twitter.finagle.Httpx</span>
+<div class="content"><div class="highlight"><pre><span class="k">import</span> <span class="nn">com.twitter.finagle.Http</span>
 
 <span class="k">val</span> <span class="n">myHttpService</span><span class="k">:</span> <span class="kt">Service</span><span class="o">[</span><span class="kt">HttpRequest</span>, <span class="kt">HttpResponse</span><span class="o">]</span> <span class="k">=</span> <span class="o">???</span>
 
@@ -5596,7 +5596,7 @@ Never await result of another Finagle request
 
 <!--subslide-->
 <section class="slide slide1">
-<h2>A better solution ==-</h2>
+<h2>A better solution</h2>
 <div class="listingblock">
 <div class="content"><div class="highlight"><pre><span class="k">for</span> <span class="o">{</span>
   <span class="n">foo</span> <span class="k">&lt;-</span> <span class="n">getFoo</span><span class="o">()</span>
