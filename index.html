@@ -5280,7 +5280,152 @@ t6DaLwIiIAIiIAIiIAIpCfw/xZEC5f9SRCgAAAAASUVORK5CYII=" />
 <span class="monospaced">onFailure(ex: Throwable &#8658; Unit)</span>
 </li>
 </ul>
-<p>More about the when and where of where futures run later</p>
+</section>
+
+<!--subslide-->
+<section class="slide slide1">
+<h2>How futures are executed</h2>
+<ul>
+<li>
+When and where do they run?
+</li>
+<li>
+How can we control that?
+</li>
+<li>
+How are they different from the futures in the standard library?
+</li>
+</ul>
+</section>
+
+<!--subslide-->
+<section class="slide slide1">
+<h2>Pop quiz</h2>
+<p>When do these return?</p>
+<div class="listingblock">
+<div class="content"><div class="highlight"><pre><span class="k">import</span> <span class="nn">com.twitter.util.Future</span>
+
+<span class="k">val</span> <span class="n">f1</span> <span class="k">=</span> <span class="nc">Future</span> <span class="o">{</span> <span class="nc">Thread</span><span class="o">.</span><span class="n">sleep</span><span class="o">(</span><span class="mi">5000</span><span class="o">)</span> <span class="o">}</span>
+<span class="k">val</span> <span class="n">f2</span> <span class="k">=</span> <span class="nc">Future</span> <span class="o">{</span> <span class="mi">0</span> <span class="o">}.</span><span class="n">map</span> <span class="o">{</span> <span class="k">_</span> <span class="k">=&gt;</span> <span class="nc">Thread</span><span class="o">.</span><span class="n">sleep</span><span class="o">(</span><span class="mi">5000</span><span class="o">)</span> <span class="o">}</span>
+<span class="k">val</span> <span class="n">f3</span> <span class="k">=</span> <span class="nc">Future</span><span class="o">.</span><span class="n">value</span><span class="o">(</span><span class="nc">Thread</span><span class="o">.</span><span class="n">sleep</span><span class="o">(</span><span class="mi">5000</span><span class="o">))</span>
+<span class="k">val</span> <span class="n">f4</span> <span class="k">=</span> <span class="k">for</span> <span class="o">{</span>
+  <span class="n">a</span> <span class="k">&lt;-</span> <span class="nc">Future</span> <span class="o">{</span> <span class="mi">1</span> <span class="o">}</span>
+  <span class="n">b</span> <span class="k">&lt;-</span> <span class="nc">Future</span> <span class="o">{</span> <span class="nc">Thread</span><span class="o">.</span><span class="n">sleep</span><span class="o">(</span><span class="mi">5000</span><span class="o">);</span> <span class="mi">2</span> <span class="o">}</span>
+<span class="o">}</span> <span class="k">yield</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+</pre></div></div></div>
+</section>
+
+<!--subslide-->
+<section class="slide slide1">
+<h2>Extra credit</h2>
+<p>When do these return?</p>
+<div class="listingblock">
+<div class="content"><div class="highlight"><pre><span class="k">import</span> <span class="nn">scala.concurrent.Future</span>
+<span class="k">import</span> <span class="nn">scala.concurrent.ExecutionContext.Implicits.global</span>
+
+<span class="k">val</span> <span class="n">f1</span> <span class="k">=</span> <span class="nc">Future</span> <span class="o">{</span> <span class="nc">Thread</span><span class="o">.</span><span class="n">sleep</span><span class="o">(</span><span class="mi">5000</span><span class="o">)</span> <span class="o">}</span>
+<span class="k">val</span> <span class="n">f2</span> <span class="k">=</span> <span class="nc">Future</span> <span class="o">{</span> <span class="mi">0</span> <span class="o">}.</span><span class="n">map</span> <span class="o">{</span> <span class="k">_</span> <span class="k">=&gt;</span> <span class="nc">Thread</span><span class="o">.</span><span class="n">sleep</span><span class="o">(</span><span class="mi">5000</span><span class="o">)</span> <span class="o">}</span>
+<span class="k">val</span> <span class="n">f3</span> <span class="k">=</span> <span class="nc">Future</span><span class="o">.</span><span class="n">successful</span><span class="o">(</span><span class="nc">Thread</span><span class="o">.</span><span class="n">sleep</span><span class="o">(</span><span class="mi">5000</span><span class="o">))</span>
+<span class="k">val</span> <span class="n">f4</span> <span class="k">=</span> <span class="k">for</span> <span class="o">{</span>
+  <span class="n">a</span> <span class="k">&lt;-</span> <span class="nc">Future</span> <span class="o">{</span> <span class="mi">1</span> <span class="o">}</span>
+  <span class="n">b</span> <span class="k">&lt;-</span> <span class="nc">Future</span> <span class="o">{</span> <span class="nc">Thread</span><span class="o">.</span><span class="n">sleep</span><span class="o">(</span><span class="mi">5000</span><span class="o">);</span> <span class="mi">2</span> <span class="o">}</span>
+<span class="o">}</span> <span class="k">yield</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+</pre></div></div></div>
+</section>
+
+<!--subslide-->
+<section class="slide slide1">
+<h2>From the quickstart</h2>
+<div class="listingblock">
+<div class="content"><div class="highlight"><pre><span class="k">val</span> <span class="n">service</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Service</span><span class="o">[</span><span class="kt">HttpRequest</span>, <span class="kt">HttpResponse</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">apply</span><span class="o">(</span><span class="n">req</span><span class="k">:</span> <span class="kt">HttpRequest</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">HttpResponse</span><span class="o">]</span> <span class="k">=</span>
+    <span class="nc">Future</span><span class="o">.</span><span class="n">value</span><span class="o">(</span><span class="k">new</span> <span class="nc">DefaultHttpResponse</span><span class="o">(</span>
+      <span class="n">req</span><span class="o">.</span><span class="n">getProtocolVersion</span><span class="o">,</span> <span class="nc">HttpResponseStatus</span><span class="o">.</span><span class="nc">OK</span><span class="o">))</span>
+<span class="o">}</span>
+</pre></div></div></div>
+<p>We need to be careful with I/O, since <span class="monospaced">Future.value</span> blocks a Finagle thread</p>
+</section>
+
+<!--subslide-->
+<section class="slide slide1">
+<h2>Rule of thumb (courtesy of Moses Nakamura)</h2>
+<ul>
+<li>
+Never await result of another Finagle request
+</li>
+<li>
+90% blocking, 10% busy: put it on another thread
+</li>
+<li>
+10% blocking, 90% busy: put it on another thread
+</li>
+<li>
+0% blocking, 100% busy, very uneven workload: another thread
+</li>
+<li>
+0% blocking, 100% busy, even workload: probably okay
+</li>
+</ul>
+</section>
+
+<!--subslide-->
+<section class="slide slide1">
+<h2>Future pools</h2>
+<div class="listingblock">
+<div class="content"><div class="highlight"><pre><span class="k">import</span> <span class="nn">com.twitter.util.FuturePool</span>
+
+<span class="k">val</span> <span class="n">pool</span> <span class="k">=</span> <span class="nc">FuturePool</span><span class="o">.</span><span class="n">unboundedPool</span>
+
+<span class="k">val</span> <span class="n">f1</span> <span class="k">=</span> <span class="n">pool</span> <span class="o">{</span> <span class="nc">Thread</span><span class="o">.</span><span class="n">sleep</span><span class="o">(</span><span class="mi">5000</span><span class="o">);</span> <span class="mi">0</span> <span class="o">}</span>
+<span class="k">val</span> <span class="n">f2</span> <span class="k">=</span> <span class="n">pool</span> <span class="o">{</span> <span class="mi">0</span> <span class="o">}.</span><span class="n">flatMap</span> <span class="o">{</span> <span class="n">i</span> <span class="k">=&gt;</span> <span class="n">pool</span> <span class="o">{</span> <span class="n">expensiveOp</span><span class="o">(</span><span class="n">i</span><span class="o">)</span> <span class="o">}}</span>
+</pre></div></div></div>
+</section>
+
+<!--subslide-->
+<section class="slide slide1">
+<h2>Sequencing computations</h2>
+<div class="listingblock">
+<div class="content"><div class="highlight"><pre><span class="k">for</span> <span class="o">{</span>
+  <span class="n">foo</span> <span class="k">&lt;-</span> <span class="n">getFoo</span><span class="o">()</span>
+  <span class="n">bar</span> <span class="k">&lt;-</span> <span class="n">getBar</span><span class="o">(</span><span class="n">foo</span><span class="o">)</span>
+  <span class="n">baz</span> <span class="k">&lt;-</span> <span class="n">getBaz</span><span class="o">(</span><span class="n">foo</span><span class="o">)</span> <span class="c1">// Don&#39;t do this!</span>
+<span class="o">}</span> <span class="k">yield</span> <span class="o">(</span><span class="n">bar</span><span class="o">,</span> <span class="n">baz</span><span class="o">)</span>
+</pre></div></div></div>
+<p>What&#8217;s wrong here?</p>
+</section>
+
+<!--subslide-->
+<section class="slide slide1">
+<h2>One solution</h2>
+<div class="listingblock">
+<div class="content"><div class="highlight"><pre><span class="k">for</span> <span class="o">{</span>
+  <span class="n">foo</span> <span class="k">&lt;-</span> <span class="n">getFoo</span><span class="o">()</span>
+  <span class="n">bar</span> <span class="k">=</span> <span class="n">getBar</span><span class="o">(</span><span class="n">foo</span><span class="o">)</span>
+  <span class="n">baz</span> <span class="k">=</span> <span class="n">getBaz</span><span class="o">(</span><span class="n">foo</span><span class="o">)</span>
+  <span class="n">barValue</span> <span class="k">&lt;-</span> <span class="n">bar</span>
+  <span class="n">bazValue</span> <span class="k">&lt;-</span> <span class="n">baz</span>
+<span class="o">}</span> <span class="k">yield</span> <span class="o">(</span><span class="n">barValue</span><span class="o">,</span> <span class="n">bazValue</span><span class="o">)</span>
+</pre></div></div></div>
+</section>
+
+<!--subslide-->
+<section class="slide slide1">
+<h2>A better solution</h2>
+<div class="listingblock">
+<div class="content"><div class="highlight"><pre><span class="k">for</span> <span class="o">{</span>
+  <span class="n">foo</span> <span class="k">&lt;-</span> <span class="n">getFoo</span><span class="o">()</span>
+  <span class="n">pair</span> <span class="k">&lt;-</span> <span class="n">getBar</span><span class="o">(</span><span class="n">foo</span><span class="o">).</span><span class="n">join</span><span class="o">(</span><span class="n">getBaz</span><span class="o">(</span><span class="n">foo</span><span class="o">))</span>
+<span class="o">}</span> <span class="k">yield</span> <span class="n">pair</span>
+</pre></div></div></div>
+<p>"Applicative" sequencing</p>
+</section>
+
+<!--subslide-->
+<section class="slide slide1">
+<h2>More applicative sequencing</h2>
+<div class="listingblock">
+<div class="content"><div class="highlight"><pre><span class="nc">Future</span><span class="o">.</span><span class="n">collect</span><span class="o">(</span><span class="n">futures</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">Future</span><span class="o">[</span><span class="kt">Int</span><span class="o">]])</span>
+</pre></div></div></div>
 </section>
 
 <!--subslide-->
@@ -5466,152 +5611,6 @@ Lives in <span class="monospaced">target/scala-2.10/src_managed/main</span>
 <section class="slide slide1">
 <h2>Implementing the Scrooge interfaces</h2>
 <p>We need to define a method implementation for every function in our service</p>
-</section>
-
-<!--slide-->
-<section class="slide slide0">
-<h2 class="section-slide">More about futures</h2>
-<ul>
-<li>
-When and where do they run?
-</li>
-<li>
-How can we control that?
-</li>
-<li>
-How are they different from the futures in the standard library?
-</li>
-</ul>
-</section>
-
-<!--subslide-->
-<section class="slide slide1">
-<h2>Pop quiz</h2>
-<p>When do these return?</p>
-<div class="listingblock">
-<div class="content"><div class="highlight"><pre><span class="k">import</span> <span class="nn">com.twitter.util.Future</span>
-
-<span class="k">val</span> <span class="n">f1</span> <span class="k">=</span> <span class="nc">Future</span> <span class="o">{</span> <span class="nc">Thread</span><span class="o">.</span><span class="n">sleep</span><span class="o">(</span><span class="mi">5000</span><span class="o">)</span> <span class="o">}</span>
-<span class="k">val</span> <span class="n">f2</span> <span class="k">=</span> <span class="nc">Future</span> <span class="o">{</span> <span class="mi">0</span> <span class="o">}.</span><span class="n">map</span> <span class="o">{</span> <span class="k">_</span> <span class="k">=&gt;</span> <span class="nc">Thread</span><span class="o">.</span><span class="n">sleep</span><span class="o">(</span><span class="mi">5000</span><span class="o">)</span> <span class="o">}</span>
-<span class="k">val</span> <span class="n">f3</span> <span class="k">=</span> <span class="nc">Future</span><span class="o">.</span><span class="n">value</span><span class="o">(</span><span class="nc">Thread</span><span class="o">.</span><span class="n">sleep</span><span class="o">(</span><span class="mi">5000</span><span class="o">))</span>
-<span class="k">val</span> <span class="n">f4</span> <span class="k">=</span> <span class="k">for</span> <span class="o">{</span>
-  <span class="n">a</span> <span class="k">&lt;-</span> <span class="nc">Future</span> <span class="o">{</span> <span class="mi">1</span> <span class="o">}</span>
-  <span class="n">b</span> <span class="k">&lt;-</span> <span class="nc">Future</span> <span class="o">{</span> <span class="nc">Thread</span><span class="o">.</span><span class="n">sleep</span><span class="o">(</span><span class="mi">5000</span><span class="o">);</span> <span class="mi">2</span> <span class="o">}</span>
-<span class="o">}</span> <span class="k">yield</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
-</pre></div></div></div>
-</section>
-
-<!--subslide-->
-<section class="slide slide1">
-<h2>Extra credit</h2>
-<p>When do these return?</p>
-<div class="listingblock">
-<div class="content"><div class="highlight"><pre><span class="k">import</span> <span class="nn">scala.concurrent.Future</span>
-<span class="k">import</span> <span class="nn">scala.concurrent.ExecutionContext.Implicits.global</span>
-
-<span class="k">val</span> <span class="n">f1</span> <span class="k">=</span> <span class="nc">Future</span> <span class="o">{</span> <span class="nc">Thread</span><span class="o">.</span><span class="n">sleep</span><span class="o">(</span><span class="mi">5000</span><span class="o">)</span> <span class="o">}</span>
-<span class="k">val</span> <span class="n">f2</span> <span class="k">=</span> <span class="nc">Future</span> <span class="o">{</span> <span class="mi">0</span> <span class="o">}.</span><span class="n">map</span> <span class="o">{</span> <span class="k">_</span> <span class="k">=&gt;</span> <span class="nc">Thread</span><span class="o">.</span><span class="n">sleep</span><span class="o">(</span><span class="mi">5000</span><span class="o">)</span> <span class="o">}</span>
-<span class="k">val</span> <span class="n">f3</span> <span class="k">=</span> <span class="nc">Future</span><span class="o">.</span><span class="n">successful</span><span class="o">(</span><span class="nc">Thread</span><span class="o">.</span><span class="n">sleep</span><span class="o">(</span><span class="mi">5000</span><span class="o">))</span>
-<span class="k">val</span> <span class="n">f4</span> <span class="k">=</span> <span class="k">for</span> <span class="o">{</span>
-  <span class="n">a</span> <span class="k">&lt;-</span> <span class="nc">Future</span> <span class="o">{</span> <span class="mi">1</span> <span class="o">}</span>
-  <span class="n">b</span> <span class="k">&lt;-</span> <span class="nc">Future</span> <span class="o">{</span> <span class="nc">Thread</span><span class="o">.</span><span class="n">sleep</span><span class="o">(</span><span class="mi">5000</span><span class="o">);</span> <span class="mi">2</span> <span class="o">}</span>
-<span class="o">}</span> <span class="k">yield</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
-</pre></div></div></div>
-</section>
-
-<!--subslide-->
-<section class="slide slide1">
-<h2>From the quickstart</h2>
-<div class="listingblock">
-<div class="content"><div class="highlight"><pre><span class="k">val</span> <span class="n">service</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Service</span><span class="o">[</span><span class="kt">HttpRequest</span>, <span class="kt">HttpResponse</span><span class="o">]</span> <span class="o">{</span>
-  <span class="k">def</span> <span class="n">apply</span><span class="o">(</span><span class="n">req</span><span class="k">:</span> <span class="kt">HttpRequest</span><span class="o">)</span><span class="k">:</span> <span class="kt">Future</span><span class="o">[</span><span class="kt">HttpResponse</span><span class="o">]</span> <span class="k">=</span>
-    <span class="nc">Future</span><span class="o">.</span><span class="n">value</span><span class="o">(</span><span class="k">new</span> <span class="nc">DefaultHttpResponse</span><span class="o">(</span>
-      <span class="n">req</span><span class="o">.</span><span class="n">getProtocolVersion</span><span class="o">,</span> <span class="nc">HttpResponseStatus</span><span class="o">.</span><span class="nc">OK</span><span class="o">))</span>
-<span class="o">}</span>
-</pre></div></div></div>
-<p>We need to be careful with I/O, since <span class="monospaced">Future.value</span> blocks a Finagle thread</p>
-</section>
-
-<!--subslide-->
-<section class="slide slide1">
-<h2>Rule of thumb (courtesy of Moses Nakamura)</h2>
-<ul>
-<li>
-Never await result of another Finagle request
-</li>
-<li>
-90% blocking, 10% busy: put it on another thread
-</li>
-<li>
-10% blocking, 90% busy: put it on another thread
-</li>
-<li>
-0% blocking, 100% busy, very uneven workload: another thread
-</li>
-<li>
-0% blocking, 100% busy, even workload: probably okay
-</li>
-</ul>
-</section>
-
-<!--slide-->
-<section class="slide slide0">
-<h2 class="section-slide">Future pools</h2>
-<div class="listingblock">
-<div class="content"><div class="highlight"><pre><span class="k">import</span> <span class="nn">com.twitter.util.FuturePool</span>
-
-<span class="k">val</span> <span class="n">pool</span> <span class="k">=</span> <span class="nc">FuturePool</span><span class="o">.</span><span class="n">unboundedPool</span>
-
-<span class="k">val</span> <span class="n">f1</span> <span class="k">=</span> <span class="n">pool</span> <span class="o">{</span> <span class="nc">Thread</span><span class="o">.</span><span class="n">sleep</span><span class="o">(</span><span class="mi">5000</span><span class="o">);</span> <span class="mi">0</span> <span class="o">}</span>
-<span class="k">val</span> <span class="n">f2</span> <span class="k">=</span> <span class="n">pool</span> <span class="o">{</span> <span class="mi">0</span> <span class="o">}.</span><span class="n">flatMap</span> <span class="o">{</span> <span class="n">i</span> <span class="k">=&gt;</span> <span class="n">pool</span> <span class="o">{</span> <span class="n">expensiveOp</span><span class="o">(</span><span class="n">i</span><span class="o">)</span> <span class="o">}}</span>
-</pre></div></div></div>
-</section>
-
-<!--subslide-->
-<section class="slide slide1">
-<h2>Sequencing computations</h2>
-<div class="listingblock">
-<div class="content"><div class="highlight"><pre><span class="k">for</span> <span class="o">{</span>
-  <span class="n">foo</span> <span class="k">&lt;-</span> <span class="n">getFoo</span><span class="o">()</span>
-  <span class="n">bar</span> <span class="k">&lt;-</span> <span class="n">getBar</span><span class="o">(</span><span class="n">foo</span><span class="o">)</span>
-  <span class="n">baz</span> <span class="k">&lt;-</span> <span class="n">getBaz</span><span class="o">(</span><span class="n">foo</span><span class="o">)</span> <span class="c1">// Don&#39;t do this!</span>
-<span class="o">}</span> <span class="k">yield</span> <span class="o">(</span><span class="n">bar</span><span class="o">,</span> <span class="n">baz</span><span class="o">)</span>
-</pre></div></div></div>
-<p>What&#8217;s wrong here?</p>
-</section>
-
-<!--subslide-->
-<section class="slide slide1">
-<h2>One solution</h2>
-<div class="listingblock">
-<div class="content"><div class="highlight"><pre><span class="k">for</span> <span class="o">{</span>
-  <span class="n">foo</span> <span class="k">&lt;-</span> <span class="n">getFoo</span><span class="o">()</span>
-  <span class="n">bar</span> <span class="k">=</span> <span class="n">getBar</span><span class="o">(</span><span class="n">foo</span><span class="o">)</span>
-  <span class="n">baz</span> <span class="k">=</span> <span class="n">getBaz</span><span class="o">(</span><span class="n">foo</span><span class="o">)</span>
-  <span class="n">barValue</span> <span class="k">&lt;-</span> <span class="n">bar</span>
-  <span class="n">bazValue</span> <span class="k">&lt;-</span> <span class="n">baz</span>
-<span class="o">}</span> <span class="k">yield</span> <span class="o">(</span><span class="n">barValue</span><span class="o">,</span> <span class="n">bazValue</span><span class="o">)</span>
-</pre></div></div></div>
-</section>
-
-<!--subslide-->
-<section class="slide slide1">
-<h2>A better solution</h2>
-<div class="listingblock">
-<div class="content"><div class="highlight"><pre><span class="k">for</span> <span class="o">{</span>
-  <span class="n">foo</span> <span class="k">&lt;-</span> <span class="n">getFoo</span><span class="o">()</span>
-  <span class="n">pair</span> <span class="k">&lt;-</span> <span class="n">getBar</span><span class="o">(</span><span class="n">foo</span><span class="o">).</span><span class="n">join</span><span class="o">(</span><span class="n">getBaz</span><span class="o">(</span><span class="n">foo</span><span class="o">))</span>
-<span class="o">}</span> <span class="k">yield</span> <span class="n">pair</span>
-</pre></div></div></div>
-<p>"Applicative" sequencing</p>
-</section>
-
-<!--subslide-->
-<section class="slide slide1">
-<h2>More applicative sequencing</h2>
-<div class="listingblock">
-<div class="content"><div class="highlight"><pre><span class="nc">Future</span><span class="o">.</span><span class="n">collect</span><span class="o">(</span><span class="n">futures</span><span class="k">:</span> <span class="kt">Seq</span><span class="o">[</span><span class="kt">Future</span><span class="o">[</span><span class="kt">Int</span><span class="o">]])</span>
-</pre></div></div></div>
 </section>
 
 <!--slide-->
